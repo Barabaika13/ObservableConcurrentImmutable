@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-
-namespace ObservableConcurrentImmutable
+﻿namespace ObservableConcurrentImmutable
 {
     internal class Program
     {
@@ -31,28 +28,27 @@ namespace ObservableConcurrentImmutable
 
             while (true)
             {
-                Console.WriteLine("Press 'A' to add a new item, 'D' to delete an item, or 'X' to exit.");
+                Console.WriteLine("Нажмите A, чтобы добавить товар. Нажмите D, чтобы удалить товар. Нажмите X, чтобы выйти.");
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.WriteLine();
                 if (key.Key == ConsoleKey.A)
                 {
                     DateTime currentTime = DateTime.Now;
-                    string newItemName = $"Item from {currentTime}";
+                    string newItemName = $"Товар от {currentTime}";
                     var newItem = new Item { Id = shop.GetNextItemId(), Name = newItemName };
                     shop.AddItem(newItem);
                 }
                 else if (key.Key == ConsoleKey.D)
                 {
-                    Console.Write("Enter the ID of the item to delete: ");
+                    Console.Write("Введите ID товара, который вы хотите удалить: ");
                     if (int.TryParse(Console.ReadLine(), out int itemId))
                     {
                         shop.RemoveItem(itemId);
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input. Please enter a valid item ID.");
+                        Console.WriteLine("Ошибка. Введите корректный ID.");
                     }
-
                 }
                 else if (key.Key == ConsoleKey.X)
                 {
@@ -60,81 +56,9 @@ namespace ObservableConcurrentImmutable
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input. Please press 'A', 'D', or 'X'.");
+                    Console.WriteLine("Неизвестная команда. Нажмите A, чтобы добавить товар. Нажмите D, чтобы удалить товар. Нажмите X, чтобы выйти.");
                 }
-
-            }
-
-        }
-    }
-
-    public class Shop
-    {
-        private int nextItemId = 1;
-
-        public ObservableCollection<Item> _items;
-        public Shop()
-        {
-            _items = new ObservableCollection<Item>();
-        }
-
-        public void AddItem(Item item)
-        {
-            _items.Add(item);
-        }
-
-        public void RemoveItem(int itemId)
-        {
-            var itemToRemove = _items.FirstOrDefault(item => item.Id == itemId);
-            if (itemToRemove != null)
-            {
-                _items.Remove(itemToRemove);
-            }
-            else
-            {
-                Console.WriteLine($"Item with ID {itemId} not found");
             }
         }
-
-        public int GetNextItemId()
-        {
-            return nextItemId++;
-        }
-
-    }
-
-    public class Item
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        //public Item(int id, string name)
-        //{
-        //    Id = id;
-        //    Name = name;
-        //}
-    }
-
-
-    public class Customer
-    {
-        public void OnItemChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (Item newItem in eventArgs.NewItems)
-                    {
-                        Console.WriteLine($"{newItem.Name} added with ID {newItem.Id}");
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    foreach (Item oldItem in eventArgs.OldItems)
-                    {
-                        Console.WriteLine($"{oldItem.Name} with ID {oldItem.Id} removed");
-                    }
-                    break;
-            }
-        }
-    }
+    }    
 }
