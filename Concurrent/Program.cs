@@ -8,39 +8,34 @@ namespace Concurrent
 
         static async Task Main(string[] args)
         {
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-            // Start the background task
-            //Task backgroundTask = UpdateBookPercentagesAsync(cancellationTokenSource.Token);
-            Task backgroundTask = Task.Run(() => UpdateBookPercentagesAsync(cancellationTokenSource.Token));
-
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();            
+            var task = Task.Run(() => UpdatePercentagesAsync(cancellationTokenSource.Token));
             while (true)
             {
-                Console.WriteLine("Menu:");
-                Console.WriteLine("1 - Add a book");
-                Console.WriteLine("2 - Display a list of unread books");
-                Console.WriteLine("3 - Exit");
-                Console.Write("Enter your choice: ");
+                Console.WriteLine("Меню:");
+                Console.WriteLine("1 - Добавить книгу");
+                Console.WriteLine("2 - Вывести список книг");
+                Console.WriteLine("3 - Выйти");
+                Console.Write("Выберите пункт меню: ");
 
                 string choice = Console.ReadLine();
-
                 switch (choice)
                 {
                     case "1":
-                        Console.Write("Enter the title of the book: ");
+                        Console.Write("Введите название книги: ");
                         string title = Console.ReadLine();
                         AddBook(title);
                         break;
                     case "2":
-                        DisplayUnreadBooks();
+                        ShowBooks();
                         break;
                     case "3":
-                        cancellationTokenSource.Cancel(); // Signal the background task to exit
-                        await backgroundTask; // Wait for the background task to complete
-                        Console.WriteLine("Exiting the program.");
+                        cancellationTokenSource.Cancel();
+                        await task;
+                        Console.WriteLine("Выход");
                         return;
                     default:
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.WriteLine("Неизвестная команда");
                         break;
                 }
             }
@@ -51,7 +46,7 @@ namespace Concurrent
             books.TryAdd(title, 0);
         }
 
-        static void DisplayUnreadBooks()
+        static void ShowBooks()
         {
             foreach (var book in books)
             {
@@ -59,7 +54,7 @@ namespace Concurrent
             }
         }
 
-        static async Task UpdateBookPercentagesAsync(CancellationToken cancellationToken)
+        static async Task UpdatePercentagesAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -71,13 +66,12 @@ namespace Concurrent
                         int newPercentage = currentPercentage + 1;
                         books.TryUpdate(book.Key, newPercentage, currentPercentage);
                         if (newPercentage == 100)
-                        {
-                            // Remove the book if it's 100% read
+                        {                            
                             books.TryRemove(book.Key, out int value);
                         }
                     }
                 }
-                await Task.Delay(1000); // Sleep for 1 second asynchronously
+                await Task.Delay(1000);
             }
         }
     }
