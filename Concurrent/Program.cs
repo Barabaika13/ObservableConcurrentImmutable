@@ -8,9 +8,8 @@ namespace Concurrent
 
         static async Task Main(string[] args)
         {
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();            
-            var task = Task.Run(() => UpdatePercentagesAsync(cancellationTokenSource.Token));
-            //var task = UpdatePercentagesAsync(cancellationTokenSource.Token);
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            var task = UpdatePercentagesAsync(cancellationTokenSource.Token);
             while (true)
             {
                 Console.WriteLine("Меню:");
