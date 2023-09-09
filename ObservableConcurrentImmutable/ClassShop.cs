@@ -10,11 +10,11 @@ namespace ObservableConcurrentImmutable
         public Shop()
         {
             _items = new ObservableCollection<Item>();
-        }
+        }              
 
         public void AddItem(Item item)
         {
-            _items.Add(item);
+            _items.Add(item);           
         }
 
         public void RemoveItem(int itemId)
@@ -22,7 +22,7 @@ namespace ObservableConcurrentImmutable
             var itemToRemove = _items.FirstOrDefault(item => item.Id == itemId);
             if (itemToRemove != null)
             {
-                _items.Remove(itemToRemove);
+                _items.Remove(itemToRemove);               
             }
             else
             {
